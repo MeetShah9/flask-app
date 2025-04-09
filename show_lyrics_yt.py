@@ -223,5 +223,5 @@ if __name__ == '__main__':
     # Get the PORT from environment variable (Render sets this)
     port = int(os.environ.get("PORT", 5002))
     # Don't use host="0.0.0.0" in production unless needed
-    app.run(port=port, debug=False
+    app.run(port=port, debug=False)
 
