@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: spotify-lyrics-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python show_lyrics_yt.py
+    envVars:
+      - key: GENIUS_TOKEN
+        value: 'U26XhBb1rHkRG6ewM-iUtrbiVrk0FqzORlFkVTkmuBu8SaPmQ7NgqmvfU6DhMuu8'
+      - key: SPOTIPY_CLIENT_ID
+        value: 'a24372a2aac644e2a46edc74e4a98353'
+      - key: SPOTIPY_CLIENT_SECRET
+        value: '3a8cec490f74497fa9090a19a27e6285'
+      - key: SPOTIPY_REDIRECT_URI
+        value: 'http://localhost:8080'
