@@ -16,13 +16,7 @@ SPOTIPY_REDIRECT_URI = os.environ.get("SPOTIPY_REDIRECT_URI", "http://localhost:
 
 SCOPE = 'user-read-currently-playing user-read-playback-position'
 
-# genius = Genius(GENIUS_TOKEN, remove_section_headers=True, skip_non_songs=True)
-# sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-#     client_id=SPOTIPY_CLIENT_ID,
-#     client_secret=SPOTIPY_CLIENT_SECRET,
-#     redirect_uri=SPOTIPY_REDIRECT_URI,
-#     scope=SCOPE
-# ))
+
 
 app = Flask(__name__)
 last_track_id = None
