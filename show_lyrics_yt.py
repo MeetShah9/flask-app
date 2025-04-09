@@ -220,7 +220,3 @@ html_template = """
 </html>
 """
 
-if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 3000))  # 👈 define port here
-    app.run(host="0.0.0.0", port=port, debug=True)
