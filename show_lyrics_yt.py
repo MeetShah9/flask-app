@@ -16,13 +16,13 @@ SPOTIPY_REDIRECT_URI = os.environ.get("SPOTIPY_REDIRECT_URI", "http://localhost:
 
 SCOPE = 'user-read-currently-playing user-read-playback-position'
 
-genius = Genius(GENIUS_TOKEN, remove_section_headers=True, skip_non_songs=True)
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-    client_id=SPOTIPY_CLIENT_ID,
-    client_secret=SPOTIPY_CLIENT_SECRET,
-    redirect_uri=SPOTIPY_REDIRECT_URI,
-    scope=SCOPE
-))
+# genius = Genius(GENIUS_TOKEN, remove_section_headers=True, skip_non_songs=True)
+# sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+#     client_id=SPOTIPY_CLIENT_ID,
+#     client_secret=SPOTIPY_CLIENT_SECRET,
+#     redirect_uri=SPOTIPY_REDIRECT_URI,
+#     scope=SCOPE
+# ))
 
 app = Flask(__name__)
 last_track_id = None
@@ -31,11 +31,20 @@ cached_lyrics = []
 @app.route('/')
 def index():
     return render_template_string(html_template)
-
-@app.route('/now_playing')
+@app.route('/now_playing', methods=["GET"])
 def now_playing():
     global last_track_id, cached_lyrics
+
     try:
+        # Try to create auth manager (safe on localhost only!)
+        auth_manager = SpotifyOAuth(
+            client_id=SPOTIPY_CLIENT_ID,
+            client_secret=SPOTIPY_CLIENT_SECRET,
+            redirect_uri=SPOTIPY_REDIRECT_URI,
+            scope=SCOPE
+        )
+        sp = spotipy.Spotify(auth_manager=auth_manager)
+
         current = sp.currently_playing()
         if not current or not current.get("is_playing"):
             return jsonify({"error": "No song is currently playing."})
@@ -48,16 +57,18 @@ def now_playing():
         progress_ms = current['progress_ms']
         album_image_url = track['album']['images'][0]['url']
 
+        # Get dominant color
         response = requests.get(album_image_url)
         img_file = BytesIO(response.content)
         color_thief = ColorThief(img_file)
         dominant_color = color_thief.get_color(quality=1)
         rgb = f"rgb({dominant_color[0]}, {dominant_color[1]}, {dominant_color[2]})"
 
+        # Get lyrics
         if track_id != last_track_id:
             song = genius.search_song(track_name, artist_name)
             if song and song.lyrics:
-                lines = [line.strip() for line in song.lyrics.split("\n")[1:] if line.strip()]
+                lines = [line.strip() for line in song.lyrics.split("\n") if line.strip()]
                 cached_lyrics = lines
             else:
                 cached_lyrics = ["Lyrics not found."]
@@ -74,7 +85,9 @@ def now_playing():
         })
 
     except Exception as e:
-        return jsonify({"error": str(e)})
+        print("Error in now_playing:", e)
+        return jsonify({"error": "Spotify auth not supported on server. Build Chrome extension to pass token."}), 500
+
 
 html_template = """
 <!DOCTYPE html>
