@@ -4,3 +4,4 @@ requests
 lyricsgenius
 flask-cors
 colorthief
+python-dotenv
