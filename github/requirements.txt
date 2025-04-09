@@ -1,7 +1,0 @@
-flask
-spotipy
-requests
-lyricsgenius
-flask-cors
-colorthief
-os
