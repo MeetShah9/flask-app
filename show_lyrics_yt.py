@@ -219,7 +219,9 @@ html_template = """
 </body>
 </html>
 """
-
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    # Get the PORT from environment variable (Render sets this)
+    port = int(os.environ.get("PORT", 5002))
+    # Don't use host="0.0.0.0" in production unless needed
+    app.run(port=port, debug=False
 
